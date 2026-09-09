@@ -17,7 +17,7 @@ class TestUrbanRoutes:
         cls.driver.implicitly_wait(10)
 
     def test_complete_taxi_order(self):
-        self.driver.get("https://cnt-eedfe5fe-e4ae-455d-90d6-43f78d2641e8.containerhub.tripleten-services.com?lng=pt")
+        self.driver.get("https://cnt-61aad21e-08e1-452b-8429-98acd5949c86.containerhub.tripleten-services.com?lng=pt")
         routes_page = UrbanRoutesPage(self.driver)
 
         routes_page.set_route("East 2nd Street, 601", "1300 1st St")
@@ -35,8 +35,8 @@ class TestUrbanRoutes:
         routes_page.select_blanket_and_tissues()
         assert routes_page.is_blanket_selected() is True
 
-        routes_page.order_two_ice_creams()
-        assert routes_page.get_ice_cream_count() == "2"
+        routes_page.order_ice_creams(2)
+        assert routes_page.get_ice_cream_count() == 2
 
         routes_page.click_order_taxi()
         assert routes_page.is_car_search_modal_visible() is True
@@ -44,7 +44,4 @@ class TestUrbanRoutes:
     @classmethod
     def teardown_class(cls):
         cls.driver.quit()
-
-
-
 

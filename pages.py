@@ -21,10 +21,10 @@ class UrbanRoutesPage:
     LINK_CARD_BUTTON = (By.XPATH, '//button[text()="Adicionar"]')
     CLOSE_PAYMENT_MODAL = (By.XPATH, '//div[contains(@class, "payment-picker")]//button[contains(@class, "close-button")]')
     COMMENT_FIELD = (By.ID, "comment")
-    BLANKET_SWITCH = (By.XPATH, '//span[@class="slider round"]')
-    BLANKET_CHECKBOX = (By.XPATH, '(//input[@class="switch-input"])')
-    ICE_CREAM_PLUS = (By.XPATH, '//div[@class="counter-plus"]')
-    ICE_CREAM_COUNTER = (By.XPATH, '(//div[@class="counter-value"])')
+    BLANKET_SWITCHES = (By.XPATH, '//input[@class="switch-input"]/following-sibling::span[@class="slider round"]')
+    BLANKET_CHECKBOXES = (By.XPATH, '//input[@class="switch-input"]')
+    ICE_CREAM_PLUS_BUTTONS = (By.XPATH, '//div[@class="counter-plus"]')
+    ICE_CREAM_COUNTER = (By.XPATH, '//div[@class="counter-value"]')
     ORDER_TAXI_BUTTON = (By.CLASS_NAME, "smart-button")
     CAR_SEARCH_MODAL = (By.CLASS_NAME, "order-body")
 
@@ -71,19 +71,20 @@ class UrbanRoutesPage:
         WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(self.COMMENT_FIELD)).send_keys(comment)
 
     def select_blanket_and_tissues(self):
-        blanket_btn = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.BLANKET_SWITCH))
-        self.driver.execute_script("arguments[0].click();", blanket_btn)
+        switches = WebDriverWait(self.driver, 10).until(EC.presence_of_all_elements_located(self.BLANKET_SWITCHES))
+        self.driver.execute_script("arguments[0].click();", switches[0])
 
     def is_blanket_selected(self):
-        return self.driver.find_element(*self.BLANKET_CHECKBOX).is_selected()
+        checkboxes = WebDriverWait(self.driver, 10).until(EC.presence_of_all_elements_located(self.BLANKET_CHECKBOXES))
+        return checkboxes[0].is_selected()
 
-    def order_two_ice_creams(self):
-        plus_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.ICE_CREAM_PLUS))
-        self.driver.execute_script("arguments[0].click();", plus_button)
-        self.driver.execute_script("arguments[0].click();", plus_button)
+    def order_ice_creams(self, amount):
+        plus_buttons = WebDriverWait(self.driver, 10).until(EC.presence_of_all_elements_located(self.ICE_CREAM_PLUS_BUTTONS))
+        for _ in range(amount):
+            self.driver.execute_script("arguments[0].click();", plus_buttons[0])
 
     def get_ice_cream_count(self):
-        return self.driver.find_element(*self.ICE_CREAM_COUNTER).text
+        return int(WebDriverWait(self.driver, 10).until(EC.visibility_of_element_located(self.ICE_CREAM_COUNTER)).text)
 
     def click_order_taxi(self):
         order_button = WebDriverWait(self.driver, 10).until(EC.presence_of_element_located(self.ORDER_TAXI_BUTTON))
